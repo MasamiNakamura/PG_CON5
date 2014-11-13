@@ -4,14 +4,28 @@ public class BuildUpBlock {
 
 	public static void main(String[] args){
 		
-		int[][] iBlockInfo;
-		ArrayList<String>[] aryResult;
-		ArrayList<String>[] wkArray;
-		int num;
-		int maxValue;
-		int maxIndex;
+		//long start = System.currentTimeMillis();
 		
-		num = Integer.parseInt(args[0]);
+		SearchTallestPattern tall = new SearchTallestPattern(args);
+		
+		tall.TryBuildUp();
+		tall.GetTallestPattern();
+		tall.OutputResult();
+		
+		//System.out.printf("%n%d", System.currentTimeMillis() - start);
+	}
+}
+
+class SearchTallestPattern{
+	int[][] iBlockInfo;
+	ArrayList<String>[] aryResult;
+	ArrayList<String>[] wkArray;
+	int num;
+	int maxValue;
+	int maxIndex;
+	
+	SearchTallestPattern(String[] s){
+		num = Integer.parseInt(s[0]);
 		iBlockInfo = new int[num + 1][6];	//添え字0の行は未使用
 		aryResult = new ArrayList[101];	//添え字0は未使用
 		wkArray = new ArrayList[6];
@@ -19,21 +33,23 @@ public class BuildUpBlock {
 		maxIndex = 0;
 		
 		//初期化
-		for(int i = 1; i <= 100; i++){
-			aryResult[i] = new ArrayList<String>(0);
-		}
-		
-		for(int i = 1; i <= 5; i++){
-			wkArray[i] = new ArrayList<String>(0);
-		}
-		
-		//コマンドライン引数の格納
-		for(int i = 1; i <= num; i++){
-			for(int j = 0; j <= 5; j++){
-				iBlockInfo[i][j] = Integer.parseInt(args[(i - 1) * 6 + j + 1]);
-			}
-		}
-		
+				for(int i = 1; i <= 100; i++){
+					aryResult[i] = new ArrayList<String>(0);
+				}
+				
+				for(int i = 1; i <= 5; i++){
+					wkArray[i] = new ArrayList<String>(0);
+				}
+				
+				//コマンドライン引数の格納
+				for(int i = 1; i <= num; i++){
+					for(int j = 0; j <= 5; j++){
+						iBlockInfo[i][j] = Integer.parseInt(s[(i - 1) * 6 + j + 1]);
+					}
+				}
+	}
+	
+	void TryBuildUp(){
 		for(int i = num; i > 0; i--){
 			for(int j = 0; j <= 5; j++){
 				//その面を上にして積むことのできる組み合わせを取得
@@ -55,7 +71,9 @@ public class BuildUpBlock {
 				}
 			}
 		}
-		
+	}
+	
+	void GetTallestPattern(){
 		//最も高い組み合わせを検索
 		for(int i = 1; i <= 100; i++){
 			if (aryResult[i].size() > maxValue){
@@ -63,17 +81,19 @@ public class BuildUpBlock {
 				maxIndex = i;
 			}
 		}
-		
+	}
+	
+	void OutputResult(){
 		//出力
 		System.out.printf("%d%n", maxValue);
 		for(int i = maxValue - 1; i >= 0; i--){
-			System.out.printf(Left(aryResult[maxIndex].get(i), aryResult[maxIndex].get(i).length() - 1));
-			System.out.printf(GetSideString(Right(aryResult[maxIndex].get(i), 1)));
+			System.out.printf(UserString.Left(aryResult[maxIndex].get(i), aryResult[maxIndex].get(i).length() - 1));
+			System.out.printf(GetSideString(UserString.Right(aryResult[maxIndex].get(i), 1)));
 			System.out.printf("%n");
 		}
 	}
 	
-	public static String GetSideString(String str){
+	private String GetSideString(String str){
 		String wkStr = "";
 		
 		switch(str) {
@@ -99,7 +119,9 @@ public class BuildUpBlock {
 		
 		return wkStr;
 	}
-	
+}
+
+class UserString{
 	public static String Left(String str, int iLength){
 		String wkStr;
 		
